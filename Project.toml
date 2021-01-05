@@ -1,0 +1,7 @@
+name = "Saliency"
+uuid = "93cb1128-fc39-4ce6-b55b-8bc2b0cd81c3"
+authors = ["Tobias Thomas <tobias.thomas@stud.tu-darmstadt.de>"]
+version = "0.1.0"
+
+[deps]
+Images = "916415d5-f1e6-5110-898d-aaa5f9f070e0"
