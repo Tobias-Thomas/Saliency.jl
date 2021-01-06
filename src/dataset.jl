@@ -12,7 +12,7 @@ end
 
 Base.length(scanpath::Scanpath) = length(scanpath.fixations)
 
-struct ExperientStimulus
+struct ExperimentStimulus
     stim_info::StimulusInfo
     scanpaths::Vector{Scanpath}
 end
@@ -38,14 +38,14 @@ function load_dataset(dataset_name::String, location::AbstractString)
         stim_infos = [StimulusInfo(p, tuple(s...)) for (p, s) in zip(stim_paths, stim_shapes)]
     end
     # Then load all the scanpath informations from fixations.hdf5
-    exp_stimuli::Vector{ExperientStimulus} = []
+    exp_stimuli::Vector{ExperimentStimulus} = []
     h5open(joinpath(location, dataset_name, "fixations.hdf5")) do fix_hdf5
         scan_stim_num = read(fix_hdf5, "train_ns")
         scan_subject = read(fix_hdf5, "train_subjects")
         scan_xs = read(fix_hdf5, "train_xs")
         scan_ys = read(fix_hdf5, "train_ys")
 
-        # create the `ExperientStimulus` for every stimulus in the data set
+        # create the `ExperimentStimulus` for every stimulus in the data set
         sizehint!(exp_stimuli, length(stim_infos))
         for (stim_num, stim_info) in enumerate(stim_infos)
             # create all scanpaths for this stimuli
@@ -61,7 +61,7 @@ function load_dataset(dataset_name::String, location::AbstractString)
                 push!(scanpaths_for_stim, Scanpath([(round(Int, x),round(Int, y)) for (x,y)
                     in zip(scanpath_x[1:scanpath_length-1], scanpath_y[1:scanpath_length-1])], subject_id))
             end
-            push!(exp_stimuli, ExperientStimulus(stim_info, scanpaths_for_stim))
+            push!(exp_stimuli, ExperimentStimulus(stim_info, scanpaths_for_stim))
         end
     end
     exp_stimuli
