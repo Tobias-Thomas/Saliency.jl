@@ -6,11 +6,12 @@ struct StimulusInfo
 end
 
 struct Scanpath
-    fixations::Vector{Tuple{Int, Int}}
+    fixations::Vector{CartesianIndex{2}}
     subject_id::Int
 end
 
 Base.length(scanpath::Scanpath) = length(scanpath.fixations)
+Base.iterate(scanpath::Scanpath, s...) = iterate(scanpath.fixations, s...)
 
 struct ExperimentStimulus
     stim_info::StimulusInfo
@@ -19,7 +20,8 @@ end
 
 const DATASETS = [
     "MIT1003",
-    "OSIE"
+    "OSIE",
+    "toronto"
 ]
 
 
@@ -50,7 +52,7 @@ function load_dataset(dataset_name::String, location::AbstractString)
         for (stim_num, stim_info) in enumerate(stim_infos)
             # create all scanpaths for this stimuli
             scanpaths_for_stim = Vector{Scanpath}()
-            for scanpath_id in findall(==(stim_num), scan_stim_num)
+            for scanpath_id in findall(==(stim_num-1), scan_stim_num)
                 subject_id = scan_subject[scanpath_id]
                 scanpath_x = scan_xs[:, scanpath_id]
                 scanpath_y = scan_ys[:, scanpath_id]
@@ -58,7 +60,7 @@ function load_dataset(dataset_name::String, location::AbstractString)
                 if scanpath_length === nothing
                     scanpath_length = length(scanpath_x) + 1
                 end
-                push!(scanpaths_for_stim, Scanpath([(round(Int, x),round(Int, y)) for (x,y)
+                push!(scanpaths_for_stim, Scanpath([CartesianIndex(1+round(Int, y), 1+round(Int, x)) for (x,y)
                     in zip(scanpath_x[1:scanpath_length-1], scanpath_y[1:scanpath_length-1])], subject_id))
             end
             push!(exp_stimuli, ExperimentStimulus(stim_info, scanpaths_for_stim))
