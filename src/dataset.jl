@@ -18,6 +18,9 @@ struct ExperimentStimulus
     scanpaths::Vector{Scanpath}
 end
 
+numsubjects(exp_stim::ExperimentStimulus) = length(exp_stim.scanpaths)
+numfixations(exp_stim::ExperimentStimulus) = sum(length.(exp_stim.scanpaths))
+
 const DATASETS = [
     "MIT1003",
     "OSIE",
