@@ -1,5 +1,3 @@
-using HDF5
-
 struct StimulusInfo
     image_path::String
     image_shape::Tuple{Int, Int, Int}
