@@ -4,6 +4,7 @@ using Statistics
 
 tests = [
     "util"
+    "metrics"
 ]
 
 @testset "Saliency" begin
