@@ -1,8 +1,20 @@
+"""
+    StimulusInfo(image_path::String, image_shape::Tuple(Int, Int, Int))
+
+The basic information of a stimulus, containing the path to the image
+file (`image_path`) and the shape of the image (`image_shape`)
+"""
 struct StimulusInfo
     image_path::String
     image_shape::Tuple{Int, Int, Int}
 end
 
+"""
+    Scanpath(fixations::Vector{CartesianIndex{2}}, subject_id::Int)
+
+The basic structure for storing scanpaths. It consists of a Vector of fixations
+(`fixations`) stored as CartesianIndex{2} and a subject identifier (`subject_id`)
+"""
 struct Scanpath
     fixations::Vector{CartesianIndex{2}}
     subject_id::Int
@@ -11,12 +23,30 @@ end
 Base.length(scanpath::Scanpath) = length(scanpath.fixations)
 Base.iterate(scanpath::Scanpath, s...) = iterate(scanpath.fixations, s...)
 
+"""
+    ExperimentStimulus(stim_info::StimulusInfo, scanpaths::Vector{Scanpath})
+
+Structure for storing information gathered in a saliency experiment about a single
+stimulus. The struct has two fields. First a stimulus info (`stim_info`) and second
+a Vector of Scanpaths (`scanpaths`), one for every suject in the experiment.
+"""
 struct ExperimentStimulus
     stim_info::StimulusInfo
     scanpaths::Vector{Scanpath}
 end
 
+"""
+    numsubjects(exp_stim::ExperimentStimulusthe given
+
+returns the number of subjects (number of available scanpaths) of the given stimulus
+"""
 numsubjects(exp_stim::ExperimentStimulus) = length(exp_stim.scanpaths)
+
+"""
+    numfixations(exp_stim::ExperimentStimulus)
+
+returns the total number of fixations made in the given stimulus
+"""
 numfixations(exp_stim::ExperimentStimulus) = sum(length.(exp_stim.scanpaths))
 
 const DATASETS = [
@@ -25,12 +55,19 @@ const DATASETS = [
     "toronto"
 ]
 
+"""
+    load_dataset(dataset_name::String, location::AbstractString)
 
+Loads the given dataset from the given location. This assumes a folder with name
+`dataset_name` to be at `location`. If this is not the case the dataset will be downloaded
+from the web and saved at `location`.
+Returns a Vector of `ExperimentStimulus`.
+"""
 function load_dataset(dataset_name::String, location::AbstractString)
     @assert dataset_name in DATASETS "dataset_name has to be a valid dataset"
     if !(isdir(joinpath(location, dataset_name)))
         print("Downloading data set")
-        return  # TODO implement downloading data
+        return 
     end
     # first load stimulus infos from stimulus.hdf5
     stim_infos::Vector{StimulusInfo} = []
