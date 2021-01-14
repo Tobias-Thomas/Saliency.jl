@@ -1,3 +1,4 @@
 .vscode/
 Manifest.toml
 datasets
+docs/build/
